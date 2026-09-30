@@ -1,0 +1,12 @@
+# Local environment smoke test.
+setup/
+
+# Generated containerlab files.
+clab-*/
+.clab/
+.*.clab.yml.bak
+
+# Python environments and cache.
+.venv/
+__pycache__/
+*.pyc
