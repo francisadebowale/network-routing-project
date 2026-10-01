@@ -1,4 +1,3 @@
-# Project topology name.
 name: static-routing
 
 topology:
@@ -8,27 +7,36 @@ topology:
       image: alpine:3.20
       # Keep the host running.
       cmd: sleep infinity
+      exec:
+        # Address the link to Router 1.
+        - ip addr add 192.168.10.10/24 dev eth1
 
     router1:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      binds:
+        # Load Router 1's configuration.
+        - configs/router1.conf:/etc/frr/frr.conf
 
     router2:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      binds:
+        # Load Router 2's configuration.
+        - configs/router2.conf:/etc/frr/frr.conf
 
     host-b:
       kind: linux
       image: alpine:3.20
-      # Keep the host running.
       cmd: sleep infinity
+      exec:
+        # Address the link to Router 2.
+        - ip addr add 192.168.20.10/24 dev eth1
 
   links:
     # Host A to Router 1.
     - endpoints: ["host-a:eth1", "router1:eth1"]
-
-    # Connection between the routers.
+    # Router 1 to Router 2.
     - endpoints: ["router1:eth2", "router2:eth1"]
-
     # Router 2 to Host B.
     - endpoints: ["router2:eth2", "host-b:eth1"]
