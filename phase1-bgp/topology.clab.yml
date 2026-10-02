@@ -6,14 +6,26 @@ topology:
     router1:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      # Load the router configuration.
+      binds:
+        - configs/router1.conf:/etc/frr/frr.conf
+        - configs/vtysh.conf:/etc/frr/vtysh.conf
 
     router2:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      # Load the router configuration.
+      binds:
+        - configs/router2.conf:/etc/frr/frr.conf
+        - configs/vtysh.conf:/etc/frr/vtysh.conf
 
     router3:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      # Load the router configuration.
+      binds:
+        - configs/router3.conf:/etc/frr/frr.conf
+        - configs/vtysh.conf:/etc/frr/vtysh.conf
 
   links:
     # Router 1 to Router 2.
