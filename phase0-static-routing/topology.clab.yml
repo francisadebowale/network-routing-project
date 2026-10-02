@@ -10,6 +10,8 @@ topology:
       exec:
         # Address the link to Router 1.
         - ip addr add 192.168.10.10/24 dev eth1
+        # Send remote traffic through Router 1.
+        - ip route replace default via 192.168.10.1 dev eth1
 
     router1:
       kind: linux
@@ -17,6 +19,9 @@ topology:
       binds:
         # Load Router 1's configuration.
         - configs/router1.conf:/etc/frr/frr.conf
+      sysctls:
+        # Allow forwarding between interfaces.
+        net.ipv4.ip_forward: 1
 
     router2:
       kind: linux
@@ -24,6 +29,9 @@ topology:
       binds:
         # Load Router 2's configuration.
         - configs/router2.conf:/etc/frr/frr.conf
+      sysctls:
+        # Allow forwarding between interfaces.
+        net.ipv4.ip_forward: 1
 
     host-b:
       kind: linux
@@ -32,6 +40,8 @@ topology:
       exec:
         # Address the link to Router 2.
         - ip addr add 192.168.20.10/24 dev eth1
+        # Send remote traffic through Router 2.
+        - ip route replace default via 192.168.20.1 dev eth1
 
   links:
     # Host A to Router 1.
