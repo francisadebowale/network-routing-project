@@ -1,0 +1,41 @@
+# VLAN switching topology.
+name: vlans
+
+topology:
+  nodes:
+    switch:
+      kind: linux
+      image: alpine:3.20
+      # Keep the switch container running.
+      cmd: sleep infinity
+
+    router:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+
+    host-a:
+      kind: linux
+      image: alpine:3.20
+      # Planned for VLAN 10.
+      cmd: sleep infinity
+
+    host-b:
+      kind: linux
+      image: alpine:3.20
+      # Planned for VLAN 10.
+      cmd: sleep infinity
+
+    host-c:
+      kind: linux
+      image: alpine:3.20
+      # Planned for VLAN 20.
+      cmd: sleep infinity
+
+  links:
+    # Host access links.
+    - endpoints: ["host-a:eth1", "switch:eth1"]
+    - endpoints: ["host-b:eth1", "switch:eth2"]
+    - endpoints: ["host-c:eth1", "switch:eth3"]
+
+    # Future VLAN trunk to the router.
+    - endpoints: ["switch:eth4", "router:eth1"]
