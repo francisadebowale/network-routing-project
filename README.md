@@ -2,6 +2,8 @@
 
 A networking project exploring routing, switching and Python automation using containerlab and FRRouting.
 
-Planned features include BGP, OSPF, IS-IS, VLANs, ECMP, tunnelling and network monitoring.
+Tested features include static routing, BGP loopback reachability, VLAN switching and inter-VLAN routing. A Python checker verifies expected BGP neighbour sessions and displays learned routes.
 
-Currently, the environment is configured and basic connectivity has been tested.
+Planned features include OSPF, IS-IS, ECMP, tunnelling and extended network monitoring. MPLS is deferred pending a compatible kernel.
+
+See [topology and addressing](docs/topology.md) for the static routing and VLAN networks.

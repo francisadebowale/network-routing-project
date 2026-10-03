@@ -1,6 +1,6 @@
 # Network Topology and Addressing
 
-This network contains two hosts and two routers. The goal is for Host A to communicate with Host B through both routers using static routing.
+The static routing topology contains two hosts and two routers. The goal is for Host A to communicate with Host B through both routers using static routing.
 
 There are three connections: Host A to Router 1, Router 1 to Router 2, and Router 2 to Host B.
 
@@ -32,3 +32,21 @@ Host A will use 192.168.10.1 as its gateway. Host B will use 192.168.20.1.
 Router 1 will need a static route to 192.168.20.0/24 through 10.0.0.2.
 
 Router 2 will need a static route to 192.168.10.0/24 through 10.0.0.1. This provides the return path for replies.
+
+## VLAN Topology
+
+`phase2-vlans/` contains three hosts, a Linux bridge switch and an FRR router. Switch ports eth1 and eth2 are untagged access ports in VLAN 10; eth3 is an untagged access port in VLAN 20. Switch eth4 connects to router eth1 as a tagged trunk carrying both VLANs. Management eth0 stays outside the bridge.
+
+| Device | Interface | VLAN | IP address | Gateway |
+|---|---|---|---|---|
+| Host A | eth1 | 10 | 192.168.10.10/24 | 192.168.10.1 |
+| Host B | eth1 | 10 | 192.168.10.11/24 | 192.168.10.1 |
+| Host C | eth1 | 20 | 192.168.20.10/24 | 192.168.20.1 |
+| Router | eth1.10 | 10 | 192.168.10.1/24 | N/A |
+| Router | eth1.20 | 20 | 192.168.20.1/24 | N/A |
+
+Before routing was configured, temporary addresses in one subnet verified Host A and Host B could ping each other in both directions, while Host A and Host C received no replies in either direction across VLANs. The temporary addresses were then removed.
+
+With the addresses above and router forwarding enabled, Host A could ping Host B, and both VLAN 10 hosts could ping Host C in both directions. Each test received three replies with no packet loss. Both VLAN subnets appeared as installed connected routes on the router.
+
+These results were tested by configuring the existing containers. A fresh deployment from the completed topology has not yet been verified. Switch package installation used an alternative Alpine mirror with a temporary IPv4 host entry in the running container.
