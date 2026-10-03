@@ -1,4 +1,4 @@
-# VLAN switching topology.
+# VLAN switching and routing topology.
 name: vlans
 
 topology:
@@ -34,24 +34,45 @@ topology:
     router:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - configs/router.conf:/etc/frr/frr.conf
+        - configs/vtysh.conf:/etc/frr/vtysh.conf
+      sysctls:
+        net.ipv4.ip_forward: 1
+      exec:
+        # Separate the tagged trunk into one interface per VLAN.
+        - ip link add link eth1 name eth1.10 type vlan id 10
+        - ip link add link eth1 name eth1.20 type vlan id 20
+        - ip link set eth1 up
+        - ip link set eth1.10 up
+        - ip link set eth1.20 up
 
     host-a:
       kind: linux
       image: alpine:3.20
-      # Planned for VLAN 10.
+      # Access host in VLAN 10.
       cmd: sleep infinity
+      exec:
+        - ip addr add 192.168.10.10/24 dev eth1
+        - ip route replace default via 192.168.10.1 dev eth1
 
     host-b:
       kind: linux
       image: alpine:3.20
-      # Planned for VLAN 10.
+      # Access host in VLAN 10.
       cmd: sleep infinity
+      exec:
+        - ip addr add 192.168.10.11/24 dev eth1
+        - ip route replace default via 192.168.10.1 dev eth1
 
     host-c:
       kind: linux
       image: alpine:3.20
-      # Planned for VLAN 20.
+      # Access host in VLAN 20.
       cmd: sleep infinity
+      exec:
+        - ip addr add 192.168.20.10/24 dev eth1
+        - ip route replace default via 192.168.20.1 dev eth1
 
   links:
     # Host access links.
@@ -59,5 +80,5 @@ topology:
     - endpoints: ["host-b:eth1", "switch:eth2"]
     - endpoints: ["host-c:eth1", "switch:eth3"]
 
-    # Future VLAN trunk to the router.
+    # Tagged VLAN trunk to the router.
     - endpoints: ["switch:eth4", "router:eth1"]
