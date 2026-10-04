@@ -50,3 +50,21 @@ Before routing was configured, temporary addresses in one subnet verified Host A
 With the addresses above and router forwarding enabled, Host A could ping Host B, and both VLAN 10 hosts could ping Host C in both directions. Each test received three replies with no packet loss. Both VLAN subnets appeared as installed connected routes on the router.
 
 These results were tested by configuring the existing containers. A fresh deployment from the completed topology has not yet been verified. Switch package installation used an alternative Alpine mirror with a temporary IPv4 host entry in the running container.
+
+## OSPF Topology
+
+`phase3-ospf/` contains three FRR routers connected in a line. Router 1 eth1 connects to Router 2 eth1; Router 2 eth2 connects to Router 3 eth1.
+
+| Router | Interface | IP address |
+|---|---|---|
+| Router 1 | eth1 | 10.0.12.1/30 |
+| Router 1 | lo | 10.255.0.1/32 |
+| Router 2 | eth1 | 10.0.12.2/30 |
+| Router 2 | eth2 | 10.0.23.1/30 |
+| Router 2 | lo | 10.255.0.2/32 |
+| Router 3 | eth1 | 10.0.23.2/30 |
+| Router 3 | lo | 10.255.0.3/32 |
+
+All project interfaces use OSPF area 0. Each router uses its loopback address as its router ID. Loopbacks are passive: their addresses are advertised without sending neighbour discovery packets. OSPF is not enabled on management eth0.
+
+After redeployment from the saved configuration, all four neighbour entries reached Full state. Each router installed OSPF routes to the other two loopbacks. Router 1 and Router 3 could ping each other's loopback using their own loopback as the source, with three replies and no packet loss in each direction.
