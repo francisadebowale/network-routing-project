@@ -1,0 +1,23 @@
+# Three-router OSPF topology.
+name: ospf
+
+topology:
+  nodes:
+    router1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+
+    router2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+
+    router3:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+
+  links:
+    # Router 1 to Router 2.
+    - endpoints: ["router1:eth1", "router2:eth1"]
+
+    # Router 2 to Router 3.
+    - endpoints: ["router2:eth2", "router3:eth1"]
