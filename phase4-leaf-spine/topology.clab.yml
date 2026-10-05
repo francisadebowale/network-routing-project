@@ -6,32 +6,63 @@ topology:
     spine1:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - configs/spine1.conf:/etc/frr/frr.conf
+        - configs/vtysh.conf:/etc/frr/vtysh.conf
+      sysctls:
+        net.ipv4.ip_forward: 1
 
     spine2:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - configs/spine2.conf:/etc/frr/frr.conf
+        - configs/vtysh.conf:/etc/frr/vtysh.conf
+      sysctls:
+        net.ipv4.ip_forward: 1
 
     leaf1:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - configs/leaf1.conf:/etc/frr/frr.conf
+        - configs/vtysh.conf:/etc/frr/vtysh.conf
+      sysctls:
+        net.ipv4.ip_forward: 1
 
     leaf2:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - configs/leaf2.conf:/etc/frr/frr.conf
+        - configs/vtysh.conf:/etc/frr/vtysh.conf
+      sysctls:
+        net.ipv4.ip_forward: 1
 
     leaf3:
       kind: linux
       image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - configs/leaf3.conf:/etc/frr/frr.conf
+        - configs/vtysh.conf:/etc/frr/vtysh.conf
+      sysctls:
+        net.ipv4.ip_forward: 1
 
     host-a:
       kind: linux
       image: alpine:3.20
       cmd: sleep infinity
+      exec:
+        - ip addr add 192.168.10.10/24 dev eth1
+        - ip route replace default via 192.168.10.1 dev eth1
 
     host-b:
       kind: linux
       image: alpine:3.20
       cmd: sleep infinity
+      exec:
+        - ip addr add 192.168.30.10/24 dev eth1
+        - ip route replace default via 192.168.30.1 dev eth1
 
   links:
     # Each leaf connects to both spines.
